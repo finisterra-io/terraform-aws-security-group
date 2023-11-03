@@ -2,7 +2,8 @@ locals {
   enabled = module.this.enabled
   inline  = var.inline_rules_enabled
 
-  allow_all_egress = local.enabled && var.allow_all_egress
+  # allow_all_egress = local.enabled && var.allow_all_egress
+  allow_all_egress = false
 
   default_rule_description = "Managed by Terraform"
 
@@ -63,7 +64,7 @@ resource "aws_security_group" "default" {
   # Because we have 2 almost identical alternatives, use x == false and x == true rather than x and !x
   count = local.create_security_group && local.sg_create_before_destroy == false ? 1 : 0
 
-  name = concat(var.security_group_name, [module.this.id])[0]
+  name = concat([var.security_group_name], [module.this.id])[0]
   lifecycle {
     create_before_destroy = false
   }
@@ -73,8 +74,8 @@ resource "aws_security_group" "default" {
   ## (copy and paste) in aws_security_group.default and aws_security_group.cbd
 
   description = var.security_group_description
-  vpc_id      = var.vpc_id
-  tags        = merge(module.this.tags, try(length(var.security_group_name[0]), 0) > 0 ? { Name = var.security_group_name[0] } : {})
+  vpc_id      = data.aws_vpc.default[0].id
+  tags        = module.this.tags
 
   revoke_rules_on_delete = var.revoke_rules_on_delete
 
@@ -120,7 +121,7 @@ resource "aws_security_group" "default" {
 }
 
 locals {
-  sg_name_prefix_base = concat(var.security_group_name, ["${module.this.id}${module.this.delimiter}"])[0]
+  sg_name_prefix_base = concat([var.security_group_name], ["${module.this.id}${module.this.delimiter}"])[0]
   # Force a new security group to be created by changing its name prefix, using `random_id` to create a short ID string
   # that changes when the rules change, and adding that to the configured name prefix.
   sg_name_prefix_forced = "${local.sg_name_prefix_base}${module.this.delimiter}${join("", random_id.rule_change_forces_new_security_group[*].b64_url)}${module.this.delimiter}"
@@ -142,8 +143,8 @@ resource "aws_security_group" "cbd" {
   ## (copy and paste) in aws_security_group.default and aws_security_group.cbd
 
   description = var.security_group_description
-  vpc_id      = var.vpc_id
-  tags        = merge(module.this.tags, try(length(var.security_group_name[0]), 0) > 0 ? { Name = var.security_group_name[0] } : {})
+  vpc_id      = data.aws_vpc.default[0].id
+  tags        = module.this.tags
 
   revoke_rules_on_delete = var.revoke_rules_on_delete
 

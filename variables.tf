@@ -14,17 +14,13 @@ variable "target_security_group_id" {
 }
 
 variable "security_group_name" {
-  type        = list(string)
+  type        = string
   description = <<-EOT
     The name to assign to the security group. Must be unique within the VPC.
     If not provided, will be derived from the `null-label.context` passed in.
     If `create_before_destroy` is true, will be used as a name prefix.
     EOT
-  default     = []
-  validation {
-    condition     = length(var.security_group_name) < 2
-    error_message = "Only 1 security group name can be provided."
-  }
+  default     = ""
 }
 
 
@@ -161,6 +157,15 @@ variable "revoke_rules_on_delete" {
 variable "vpc_id" {
   type        = string
   description = "The ID of the VPC where the Security Group will be created."
+  default     = null
+}
+
+variable "vpc_name" {
+  type        = string
+  description = <<-EOT
+    The name of the VPC where the Security Group will be created.
+    If not provided, will be derived from the `null-label.context` passed in.
+    EOT
 }
 
 variable "inline_rules_enabled" {
@@ -172,3 +177,4 @@ variable "inline_rules_enabled" {
     EOT
   default     = false
 }
+
