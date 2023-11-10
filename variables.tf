@@ -178,3 +178,11 @@ variable "inline_rules_enabled" {
   default     = false
 }
 
+
+variable "prefix_list_ids" {
+  type        = list(string)
+  description = <<-EOT
+    A list of prefix list IDs to apply all rules to.
+    EOT
+  default     = []
+}

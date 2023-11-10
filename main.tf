@@ -109,10 +109,8 @@ resource "aws_security_group" "default" {
     }
   }
 
-  timeouts {
-    create = var.security_group_create_timeout
-    delete = var.security_group_delete_timeout
-  }
+  prefix_list_ids = var.prefix_list_ids
+
 
   ##
   ## end of duplicate block
