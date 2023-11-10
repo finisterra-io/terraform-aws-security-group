@@ -109,7 +109,7 @@ resource "aws_security_group" "default" {
     }
   }
 
-  prefix_list_ids = var.prefix_list_ids
+
 
 
   ##
@@ -176,10 +176,11 @@ resource "aws_security_group" "cbd" {
     }
   }
 
-  timeouts {
-    create = var.security_group_create_timeout
-    delete = var.security_group_delete_timeout
-  }
+
+  # timeouts {
+  #   create = var.security_group_create_timeout
+  #   delete = var.security_group_delete_timeout
+  # }
 
   ##
   ## end of duplicate block
