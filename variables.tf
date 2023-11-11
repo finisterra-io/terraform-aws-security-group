@@ -162,6 +162,7 @@ variable "vpc_id" {
 
 variable "vpc_name" {
   type        = string
+  default     = null
   description = <<-EOT
     The name of the VPC where the Security Group will be created.
     If not provided, will be derived from the `null-label.context` passed in.
