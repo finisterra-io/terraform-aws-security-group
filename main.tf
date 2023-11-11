@@ -74,7 +74,7 @@ resource "aws_security_group" "default" {
   ## (copy and paste) in aws_security_group.default and aws_security_group.cbd
 
   description = var.security_group_description
-  vpc_id      = data.aws_vpc.default[0].id
+  vpc_id      = var.vpc_name != null ? data.aws_vpc.default[0].id : var.vpc_id
   tags        = module.this.tags
 
   revoke_rules_on_delete = var.revoke_rules_on_delete
