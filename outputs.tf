@@ -13,7 +13,7 @@ output "name" {
   value       = try(local.created_security_group.name, null)
 }
 
-output "rules_terraform_ids" {
-  description = "List of Terraform IDs of created `security_group_rule` resources, primarily provided to enable `depends_on`"
-  value       = values(aws_security_group_rule.keyed).*.id
-}
+# output "rules_terraform_ids" {
+#   description = "List of Terraform IDs of created `security_group_rule` resources, primarily provided to enable `depends_on`"
+#   value       = values(aws_security_group_rule.keyed).*.id
+# }
