@@ -284,19 +284,19 @@ resource "aws_vpc_security_group_ingress_rule" "dbc" {
 #    references to it have been changed to refer to the new security group.
 # 2. It ensures the new security group rules are created before
 #    the new security group is associated with existing resources
-resource "null_resource" "sync_rules_and_sg_lifecycles" {
-  # NOTE: This resource affects the lifecycles even when count = 0,
-  # see https://github.com/hashicorp/terraform/issues/31316#issuecomment-1167450615
-  # Still, we can avoid creating it when we do not need it to be triggered.
-  count = local.enabled && local.rule_create_before_destroy ? 1 : 0
-  # Replacement of the security group requires re-provisioning
-  triggers = {
-    sg_ids = one(aws_security_group.cbd[*].id)
-  }
+# resource "null_resource" "sync_rules_and_sg_lifecycles" {
+#   # NOTE: This resource affects the lifecycles even when count = 0,
+#   # see https://github.com/hashicorp/terraform/issues/31316#issuecomment-1167450615
+#   # Still, we can avoid creating it when we do not need it to be triggered.
+#   count = local.enabled && local.rule_create_before_destroy ? 1 : 0
+#   # Replacement of the security group requires re-provisioning
+#   triggers = {
+#     sg_ids = one(aws_security_group.cbd[*].id)
+#   }
 
-  depends_on = [aws_security_group_rule.keyed]
+#   depends_on = [aws_security_group_rule.keyed]
 
-  lifecycle {
-    create_before_destroy = true
-  }
-}
+#   lifecycle {
+#     create_before_destroy = true
+#   }
+# }
