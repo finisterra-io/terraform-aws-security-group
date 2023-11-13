@@ -270,7 +270,7 @@ resource "aws_vpc_security_group_ingress_rule" "dbc" {
   description                  = each.value.description
   cidr_ipv4                    = try(each.value.cidr_ipv4, null)
   cidr_ipv6                    = try(each.value.cidr_ipv6, null)
-  prefix_list_id               = try(each.value.prefix_list_id, [])
+  prefix_list_id               = try(each.value.prefix_list_id, null)
   referenced_security_group_id = try(each.value.referenced_security_group_id, null)
   tags                         = each.value.tags
 }
