@@ -16,7 +16,7 @@ locals {
     type        = rule.type
     from_port   = rule.from_port
     to_port     = rule.to_port
-    protocol    = rule.protocol
+    protocol    = rule.ip_protocol
     description = lookup(rule, "description", local.default_rule_description)
 
     # Convert a missing key, a value of null, or a value of empty list to []
@@ -38,7 +38,7 @@ locals {
     type        = rule.type
     from_port   = rule.from_port
     to_port     = rule.to_port
-    protocol    = rule.protocol
+    protocol    = rule.ip_protocol
     description = lookup(rule, "description", local.default_rule_description)
 
     # We tried to be lenient and convert a missing key, a value of null, or a value of empty list to []
@@ -91,7 +91,7 @@ locals {
     type        = rule.type
     from_port   = rule.from_port
     to_port     = rule.to_port
-    protocol    = rule.protocol
+    protocol    = rule.ip_protocol
     description = rule.description
 
     cidr_blocks      = []
@@ -113,7 +113,7 @@ locals {
     type        = rule.type
     from_port   = rule.from_port
     to_port     = rule.to_port
-    protocol    = rule.protocol
+    protocol    = rule.ip_protocol
     description = rule.description
 
     cidr_blocks      = rule.cidr_blocks
@@ -132,7 +132,7 @@ locals {
     type        = rule.type
     from_port   = rule.from_port
     to_port     = rule.to_port
-    protocol    = rule.protocol
+    protocol    = rule.ip_protocol
     description = rule.description
 
     cidr_blocks      = []
@@ -148,7 +148,7 @@ locals {
     type        = rule.type
     from_port   = rule.from_port
     to_port     = rule.to_port
-    protocol    = rule.protocol
+    protocol    = rule.ip_protocol
     description = rule.description
 
     cidr_blocks      = []
