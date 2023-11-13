@@ -225,37 +225,37 @@ resource "aws_security_group_rule" "keyed" {
 
 }
 
-resource "aws_security_group_rule" "dbc" {
-  for_each = local.rule_create_before_destroy ? {} : local.keyed_resource_rules
+# resource "aws_security_group_rule" "dbc" {
+#   for_each = local.rule_create_before_destroy ? {} : local.keyed_resource_rules
 
-  lifecycle {
-    # This has no actual effect, it is just here for emphasis
-    create_before_destroy = false
-  }
-  ########################################################################
-  ## Everything from here to the end of this resource should be identical
-  ## (copy and paste) in aws_security_group.default and aws_security_group.cbd
+#   lifecycle {
+#     # This has no actual effect, it is just here for emphasis
+#     create_before_destroy = false
+#   }
+#   ########################################################################
+#   ## Everything from here to the end of this resource should be identical
+#   ## (copy and paste) in aws_security_group.default and aws_security_group.cbd
 
 
-  security_group_id = local.security_group_id
+#   security_group_id = local.security_group_id
 
-  type        = each.value.type
-  from_port   = each.value.from_port
-  to_port     = each.value.to_port
-  protocol    = each.value.protocol
-  description = each.value.description
+#   type        = each.value.type
+#   from_port   = each.value.from_port
+#   to_port     = each.value.to_port
+#   protocol    = each.value.protocol
+#   description = each.value.description
 
-  cidr_blocks              = length(each.value.cidr_blocks) == 0 ? null : each.value.cidr_blocks
-  ipv6_cidr_blocks         = length(each.value.ipv6_cidr_blocks) == 0 ? null : each.value.ipv6_cidr_blocks
-  prefix_list_ids          = length(each.value.prefix_list_ids) == 0 ? [] : each.value.prefix_list_ids
-  self                     = each.value.self
-  source_security_group_id = each.value.source_security_group_id
+#   cidr_blocks              = length(each.value.cidr_blocks) == 0 ? null : each.value.cidr_blocks
+#   ipv6_cidr_blocks         = length(each.value.ipv6_cidr_blocks) == 0 ? null : each.value.ipv6_cidr_blocks
+#   prefix_list_ids          = length(each.value.prefix_list_ids) == 0 ? [] : each.value.prefix_list_ids
+#   self                     = each.value.self
+#   source_security_group_id = each.value.source_security_group_id
 
-  ##
-  ## end of duplicate block
-  ########################################################################
+#   ##
+#   ## end of duplicate block
+#   ########################################################################
 
-}
+# }
 
 # This null resource prevents an outage when a new Security Group needs to be provisioned
 # and `local.rule_create_before_destroy` is `true`:
