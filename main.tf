@@ -275,6 +275,25 @@ resource "aws_vpc_security_group_ingress_rule" "dbc" {
   tags                         = try(each.value.tags, null)
 }
 
+resource "aws_vpc_security_group_egress_rule" "dbc" {
+  for_each = var.egress_rules
+
+  lifecycle {
+    # This has no actual effect, it is just here for emphasis
+    create_before_destroy = false
+  }
+  security_group_id            = local.security_group_id
+  from_port                    = try(each.value.from_port, null)
+  to_port                      = try(each.value.to_port, null)
+  ip_protocol                  = each.value.ip_protocol
+  description                  = try(each.value.description, null)
+  cidr_ipv4                    = try(each.value.cidr_ipv4, null)
+  cidr_ipv6                    = try(each.value.cidr_ipv6, null)
+  prefix_list_id               = try(each.value.prefix_list_id, null)
+  referenced_security_group_id = try(each.value.referenced_security_group_id, null)
+  tags                         = try(each.value.tags, null)
+}
+
 
 # This null resource prevents an outage when a new Security Group needs to be provisioned
 # and `local.rule_create_before_destroy` is `true`:
