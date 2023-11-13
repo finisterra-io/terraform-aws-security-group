@@ -183,3 +183,8 @@ variable "ingress_rules" {
   type    = any
   default = {}
 }
+
+variable "egress_rules" {
+  type    = any
+  default = {}
+}
