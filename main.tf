@@ -191,37 +191,37 @@ resource "aws_security_group" "cbd" {
 # See https://github.com/hashicorp/terraform-provider-aws/issues/25173 and its References.
 # You cannot toggle `create_before_destroy` based on input,
 # you have to have a completely separate resource to change it.
-resource "aws_security_group_rule" "keyed" {
-  for_each = local.rule_create_before_destroy ? local.keyed_resource_rules : {}
+# resource "aws_security_group_rule" "keyed" {
+#   for_each = local.rule_create_before_destroy ? local.keyed_resource_rules : {}
 
-  lifecycle {
-    create_before_destroy = true
-  }
+#   lifecycle {
+#     create_before_destroy = true
+#   }
 
-  ########################################################################
-  ## Everything from here to the end of this resource should be identical
-  ## (copy and paste) in aws_security_group_rule.keyed and aws_security_group.dbc
+#   ########################################################################
+#   ## Everything from here to the end of this resource should be identical
+#   ## (copy and paste) in aws_security_group_rule.keyed and aws_security_group.dbc
 
 
-  security_group_id = local.cbd_security_group_id
+#   security_group_id = local.cbd_security_group_id
 
-  type        = each.value.type
-  from_port   = each.value.from_port
-  to_port     = each.value.to_port
-  protocol    = each.value.protocol
-  description = each.value.description
+#   type        = each.value.type
+#   from_port   = each.value.from_port
+#   to_port     = each.value.to_port
+#   protocol    = each.value.protocol
+#   description = each.value.description
 
-  cidr_blocks              = length(each.value.cidr_blocks) == 0 ? null : each.value.cidr_blocks
-  ipv6_cidr_blocks         = length(each.value.ipv6_cidr_blocks) == 0 ? null : each.value.ipv6_cidr_blocks
-  prefix_list_ids          = length(each.value.prefix_list_ids) == 0 ? [] : each.value.prefix_list_ids
-  self                     = each.value.self
-  source_security_group_id = each.value.source_security_group_id
+#   cidr_blocks              = length(each.value.cidr_blocks) == 0 ? null : each.value.cidr_blocks
+#   ipv6_cidr_blocks         = length(each.value.ipv6_cidr_blocks) == 0 ? null : each.value.ipv6_cidr_blocks
+#   prefix_list_ids          = length(each.value.prefix_list_ids) == 0 ? [] : each.value.prefix_list_ids
+#   self                     = each.value.self
+#   source_security_group_id = each.value.source_security_group_id
 
-  ##
-  ## end of duplicate block
-  ########################################################################
+#   ##
+#   ## end of duplicate block
+#   ########################################################################
 
-}
+# }
 
 # resource "aws_security_group_rule" "dbc" {
 #   for_each = local.rule_create_before_destroy ? {} : local.keyed_resource_rules
@@ -257,7 +257,7 @@ resource "aws_security_group_rule" "keyed" {
 
 
 resource "aws_vpc_security_group_ingress_rule" "dbc" {
-  for_each = local.rule_create_before_destroy ? {} : local.keyed_resource_rules
+  for_each = var.ingress_rules
 
   lifecycle {
     # This has no actual effect, it is just here for emphasis
@@ -267,7 +267,7 @@ resource "aws_vpc_security_group_ingress_rule" "dbc" {
 
   from_port   = each.value.from_port
   to_port     = each.value.to_port
-  ip_protocol = each.value.protocol
+  ip_protocol = each.value.ip_protocol
   description = each.value.description
 
   cidr_ipv4                    = length(each.value.cidr_blocks) == 0 ? null : each.value.cidr_blocks

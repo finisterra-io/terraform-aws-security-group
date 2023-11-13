@@ -178,3 +178,8 @@ variable "inline_rules_enabled" {
     EOT
   default     = false
 }
+
+variable "ingress_rules" {
+  type    = map(any)
+  default = {}
+}
