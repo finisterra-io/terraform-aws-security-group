@@ -263,13 +263,11 @@ resource "aws_vpc_security_group_ingress_rule" "dbc" {
     # This has no actual effect, it is just here for emphasis
     create_before_destroy = false
   }
-  security_group_id = local.security_group_id
-
-  from_port   = each.value.from_port
-  to_port     = each.value.to_port
-  ip_protocol = each.value.ip_protocol
-  description = each.value.description
-
+  security_group_id            = local.security_group_id
+  from_port                    = try(each.value.from_port, null)
+  to_port                      = try(each.value.to_port, null)
+  ip_protocol                  = try(each.value.ip_protocol, null)
+  description                  = try(each.value.description, null)
   cidr_ipv4                    = try(each.value.cidr_ipv4, null)
   cidr_ipv6                    = try(each.value.cidr_ipv6, null)
   prefix_list_id               = try(each.value.prefix_list_ids, null)
