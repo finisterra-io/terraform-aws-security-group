@@ -79,37 +79,35 @@ resource "aws_security_group" "default" {
 
   revoke_rules_on_delete = var.revoke_rules_on_delete
 
-  dynamic "ingress" {
-    for_each = local.all_ingress_rules
-    content {
-      from_port        = ingress.value.from_port
-      to_port          = ingress.value.to_port
-      protocol         = ingress.value.protocol
-      description      = ingress.value.description
-      cidr_blocks      = ingress.value.cidr_blocks
-      ipv6_cidr_blocks = ingress.value.ipv6_cidr_blocks
-      prefix_list_ids  = ingress.value.prefix_list_ids
-      security_groups  = ingress.value.security_groups
-      self             = ingress.value.self
-    }
-  }
+  # dynamic "ingress" {
+  #   for_each = local.all_ingress_rules
+  #   content {
+  #     from_port        = ingress.value.from_port
+  #     to_port          = ingress.value.to_port
+  #     protocol         = ingress.value.protocol
+  #     description      = ingress.value.description
+  #     cidr_blocks      = ingress.value.cidr_blocks
+  #     ipv6_cidr_blocks = ingress.value.ipv6_cidr_blocks
+  #     prefix_list_ids  = ingress.value.prefix_list_ids
+  #     security_groups  = ingress.value.security_groups
+  #     self             = ingress.value.self
+  #   }
+  # }
 
-  dynamic "egress" {
-    for_each = local.all_egress_rules
-    content {
-      from_port        = egress.value.from_port
-      to_port          = egress.value.to_port
-      protocol         = egress.value.protocol
-      description      = egress.value.description
-      cidr_blocks      = egress.value.cidr_blocks
-      ipv6_cidr_blocks = egress.value.ipv6_cidr_blocks
-      prefix_list_ids  = egress.value.prefix_list_ids
-      security_groups  = egress.value.security_groups
-      self             = egress.value.self
-    }
-  }
-
-
+  # dynamic "egress" {
+  #   for_each = local.all_egress_rules
+  #   content {
+  #     from_port        = egress.value.from_port
+  #     to_port          = egress.value.to_port
+  #     protocol         = egress.value.protocol
+  #     description      = egress.value.description
+  #     cidr_blocks      = egress.value.cidr_blocks
+  #     ipv6_cidr_blocks = egress.value.ipv6_cidr_blocks
+  #     prefix_list_ids  = egress.value.prefix_list_ids
+  #     security_groups  = egress.value.security_groups
+  #     self             = egress.value.self
+  #   }
+  # }
 
 
   ##
@@ -256,6 +254,29 @@ resource "aws_security_group_rule" "keyed" {
 #   ########################################################################
 
 # }
+
+
+resource "aws_vpc_security_group_ingress_rule" "dbc" {
+  for_each = local.rule_create_before_destroy ? {} : local.keyed_resource_rules
+
+  lifecycle {
+    # This has no actual effect, it is just here for emphasis
+    create_before_destroy = false
+  }
+  security_group_id = local.security_group_id
+
+  from_port   = each.value.from_port
+  to_port     = each.value.to_port
+  ip_protocol = each.value.protocol
+  description = each.value.description
+
+  cidr_ipv4                    = length(each.value.cidr_blocks) == 0 ? null : each.value.cidr_blocks
+  cidr_ipv6                    = length(each.value.ipv6_cidr_blocks) == 0 ? null : each.value.ipv6_cidr_blocks
+  prefix_list_id               = length(each.value.prefix_list_ids) == 0 ? [] : each.value.prefix_list_ids
+  referenced_security_group_id = each.value.source_security_group_id
+  tags                         = each.value.tags
+}
+
 
 # This null resource prevents an outage when a new Security Group needs to be provisioned
 # and `local.rule_create_before_destroy` is `true`:
