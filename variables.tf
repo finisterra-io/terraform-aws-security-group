@@ -180,6 +180,6 @@ variable "inline_rules_enabled" {
 }
 
 variable "ingress_rules" {
-  type    = map(any)
+  type    = any
   default = {}
 }
