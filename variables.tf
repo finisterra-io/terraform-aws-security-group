@@ -41,7 +41,7 @@ variable "create_before_destroy" {
     that you do not want replaced and therefore need full control over its name.
     Note that changing this value will always cause the security group to be replaced.
     EOT
-  default     = true
+  default     = false
 }
 
 variable "preserve_security_group_id" {
