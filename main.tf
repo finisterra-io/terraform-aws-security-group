@@ -1,5 +1,5 @@
 locals {
-  enabled = module.this.enabled
+  enabled = var.enabled
   inline  = var.inline_rules_enabled
 
   # allow_all_egress = local.enabled && var.allow_all_egress
@@ -33,7 +33,6 @@ locals {
   # We also have to make it clear to Terraform that the "create before destroy" (CBD) rules
   # will never reference the "destroy before create" (DBC) security group (SG)
   # by keeping any conditional reference to the DBC SG out of the expression (unlike the `security_group_id` expression above).
-  cbd_security_group_id = local.create_security_group ? one(aws_security_group.cbd[*].id) : local.target_security_group_id
 
   # The only way to guarantee success when creating new rules before destroying old ones
   # is to make the new rules part of a new security group.
@@ -41,14 +40,6 @@ locals {
   rule_change_forces_new_security_group = local.enabled && local.rule_create_before_destroy
 }
 
-# We force a new security group by changing its name, using `random_id` to generate a part of the name prefix
-resource "random_id" "rule_change_forces_new_security_group" {
-  count       = local.rule_change_forces_new_security_group ? 1 : 0
-  byte_length = 3
-  keepers = {
-    rules = jsonencode(local.keyed_resource_rules)
-  }
-}
 
 # You cannot toggle `create_before_destroy` based on input,
 # you have to have a completely separate resource to change it.
@@ -79,62 +70,8 @@ locals {
   sg_name_prefix_base = concat([var.security_group_name], ["${module.this.id}${module.this.delimiter}"])[0]
   # Force a new security group to be created by changing its name prefix, using `random_id` to create a short ID string
   # that changes when the rules change, and adding that to the configured name prefix.
-  sg_name_prefix_forced = "${local.sg_name_prefix_base}${module.this.delimiter}${join("", random_id.rule_change_forces_new_security_group[*].b64_url)}${module.this.delimiter}"
-  sg_name_prefix        = local.rule_change_forces_new_security_group ? local.sg_name_prefix_forced : local.sg_name_prefix_base
 }
 
-
-resource "aws_security_group" "cbd" {
-  # Because we have 2 almost identical alternatives, use x == false and x == true rather than x and !x
-  count = local.create_security_group && local.sg_create_before_destroy == true ? 1 : 0
-
-  name_prefix = local.sg_name_prefix
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  ########################################################################
-  ## Everything from here to the end of this resource should be identical
-  ## (copy and paste) in aws_security_group.default and aws_security_group.cbd
-
-  description = var.security_group_description
-  vpc_id      = var.vpc_name != null ? data.aws_vpc.default[0].id : var.vpc_id
-  tags        = module.this.tags
-
-  revoke_rules_on_delete = var.revoke_rules_on_delete
-
-  dynamic "ingress" {
-    for_each = local.all_ingress_rules
-    content {
-      from_port        = ingress.value.from_port
-      to_port          = ingress.value.to_port
-      protocol         = ingress.value.protocol
-      description      = ingress.value.description
-      cidr_blocks      = ingress.value.cidr_blocks
-      ipv6_cidr_blocks = ingress.value.ipv6_cidr_blocks
-      prefix_list_ids  = ingress.value.prefix_list_ids
-      security_groups  = ingress.value.security_groups
-      self             = ingress.value.self
-    }
-  }
-
-  dynamic "egress" {
-    for_each = local.all_egress_rules
-    content {
-      from_port        = egress.value.from_port
-      to_port          = egress.value.to_port
-      protocol         = egress.value.protocol
-      description      = egress.value.description
-      cidr_blocks      = egress.value.cidr_blocks
-      ipv6_cidr_blocks = egress.value.ipv6_cidr_blocks
-      prefix_list_ids  = egress.value.prefix_list_ids
-      security_groups  = egress.value.security_groups
-      self             = egress.value.self
-    }
-  }
-
-
-}
 
 
 resource "aws_vpc_security_group_ingress_rule" "dbc" {

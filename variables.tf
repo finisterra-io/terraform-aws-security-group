@@ -1,3 +1,9 @@
+variable "enabled" {
+  type        = bool
+  description = "Set to false to prevent the module from creating any resources."
+  default     = true
+}
+
 variable "target_security_group_id" {
   type        = list(string)
   description = <<-EOT
