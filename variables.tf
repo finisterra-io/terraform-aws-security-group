@@ -66,15 +66,6 @@ variable "preserve_security_group_id" {
   default     = false
 }
 
-variable "allow_all_egress" {
-  type        = bool
-  description = <<-EOT
-    A convenience that adds to the rules specified elsewhere a rule that allows all egress.
-    If this is false and no egress rules are specified via `rules` or `rule-matrix`, then no egress will be allowed.
-    EOT
-  default     = true
-}
-
 variable "rules" {
   type        = list(any)
   description = <<-EOT
@@ -112,21 +103,6 @@ variable "rule_matrix" {
   default     = []
 }
 
-variable "security_group_create_timeout" {
-  type        = string
-  description = "How long to wait for the security group to be created."
-  default     = "10m"
-}
-
-variable "security_group_delete_timeout" {
-  type        = string
-  description = <<-EOT
-    How long to retry on `DependencyViolation` errors during security group deletion from
-    lingering ENIs left by certain AWS services such as Elastic Load Balancing.
-    EOT
-  default     = "15m"
-}
-
 variable "revoke_rules_on_delete" {
   type        = bool
   description = <<-EOT
@@ -159,16 +135,6 @@ variable "inline_rules_enabled" {
     See [this post](https://github.com/hashicorp/terraform-provider-aws/pull/9032#issuecomment-639545250) for details on the difference between inline rules and rule resources.
     EOT
   default     = false
-}
-
-variable "ingress_rules" {
-  type    = any
-  default = {}
-}
-
-variable "egress_rules" {
-  type    = any
-  default = {}
 }
 
 variable "tags" {

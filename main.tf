@@ -7,11 +7,9 @@ locals {
 
   default_rule_description = "Managed by Terraform"
 
-  create_security_group      = local.enabled && length(var.target_security_group_id) == 0
   sg_create_before_destroy   = var.create_before_destroy
   preserve_security_group_id = var.preserve_security_group_id || length(var.target_security_group_id) > 0
 
-  target_security_group_id = try(var.target_security_group_id[0], "")
 
   # Setting `create_before_destroy` on the security group rules forces `create_before_destroy` behavior
   # on the security group, so we have to disable it on the rules if disabled on the security group.
@@ -35,7 +33,7 @@ locals {
 # you have to have a completely separate resource to change it.
 resource "aws_security_group" "default" {
   # Because we have 2 almost identical alternatives, use x == false and x == true rather than x and !x
-  count = local.create_security_group && local.sg_create_before_destroy == false ? 1 : 0
+  count = var.enabled && local.sg_create_before_destroy == false ? 1 : 0
 
   name = var.security_group_name
   lifecycle {

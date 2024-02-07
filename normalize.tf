@@ -77,10 +77,6 @@ locals {
 
   all_inline_rules = concat(local.norm_rules, local.norm_matrix, local.extra_rules)
 
-  # For inline rules, the rules have to be separated into ingress and egress
-  all_ingress_rules = local.inline ? [for r in local.all_inline_rules : r if r.type == "ingress"] : []
-  all_egress_rules  = local.inline ? [for r in local.all_inline_rules : r if r.type == "egress"] : []
-
   # In `aws_security_group_rule` a rule can only have one security group, not a list, so we have to explode the matrix
   # Also, self, source_security_group_id, and CIDRs conflict with each other, so they have to be separated out.
   # We must be very careful not to make the computed number of rules in any way dependant
@@ -160,6 +156,5 @@ locals {
     source_security_group_id = sg
   }]])
 
-  all_resource_rules   = concat(local.norm_rules, local.self_rules, local.sg_exploded_rules, local.other_rules, local.extra_rules)
-  keyed_resource_rules = { for r in local.all_resource_rules : r.key => r }
+  all_resource_rules = concat(local.norm_rules, local.self_rules, local.sg_exploded_rules, local.other_rules, local.extra_rules)
 }
