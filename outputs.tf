@@ -12,4 +12,3 @@ output "name" {
   description = "The created Security Group Name (null if using existing security group)"
   value       = try(local.created_security_group.name, null)
 }
-
