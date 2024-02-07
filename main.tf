@@ -11,17 +11,7 @@ locals {
   sg_create_before_destroy   = var.create_before_destroy
   preserve_security_group_id = var.preserve_security_group_id || length(var.target_security_group_id) > 0
 
-  created_security_group = local.create_security_group ? (
-    local.sg_create_before_destroy ? aws_security_group.cbd[0] : aws_security_group.default[0]
-  ) : null
-
   target_security_group_id = try(var.target_security_group_id[0], "")
-
-  security_group_id = local.enabled ? (
-    # Use coalesce() here to hack an error message into the output
-    local.create_security_group ? local.created_security_group.id : coalesce(local.target_security_group_id,
-    "var.target_security_group_id contains an empty value. Omit any value if you want this module to create a security group.")
-  ) : null
 
   # Setting `create_before_destroy` on the security group rules forces `create_before_destroy` behavior
   # on the security group, so we have to disable it on the rules if disabled on the security group.
@@ -73,7 +63,7 @@ resource "aws_vpc_security_group_ingress_rule" "dbc" {
     # This has no actual effect, it is just here for emphasis
     create_before_destroy = false
   }
-  security_group_id            = local.security_group_id
+  security_group_id            = aws_security_group.default[0].id
   from_port                    = try(each.value.from_port, null)
   to_port                      = try(each.value.to_port, null)
   ip_protocol                  = each.value.ip_protocol
