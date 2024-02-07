@@ -47,7 +47,7 @@ resource "aws_security_group" "default" {
   # Because we have 2 almost identical alternatives, use x == false and x == true rather than x and !x
   count = local.create_security_group && local.sg_create_before_destroy == false ? 1 : 0
 
-  name = concat([var.security_group_name], [module.this.id])[0]
+  name = var.security_group_name
   lifecycle {
     create_before_destroy = false
   }
@@ -58,21 +58,13 @@ resource "aws_security_group" "default" {
 
   description = var.security_group_description
   vpc_id      = var.vpc_name != null ? data.aws_vpc.default[0].id : var.vpc_id
-  tags        = module.this.tags
+  tags        = var.tags
 
   revoke_rules_on_delete = var.revoke_rules_on_delete
 
   ########################################################################
 
 }
-
-locals {
-  sg_name_prefix_base = concat([var.security_group_name], ["${module.this.id}${module.this.delimiter}"])[0]
-  # Force a new security group to be created by changing its name prefix, using `random_id` to create a short ID string
-  # that changes when the rules change, and adding that to the configured name prefix.
-}
-
-
 
 resource "aws_vpc_security_group_ingress_rule" "dbc" {
   for_each = var.ingress_rules
