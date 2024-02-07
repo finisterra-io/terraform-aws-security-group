@@ -50,59 +50,6 @@ variable "create_before_destroy" {
   default     = false
 }
 
-variable "preserve_security_group_id" {
-  type        = bool
-  description = <<-EOT
-    When `false` and `create_before_destroy` is `true`, changes to security group rules
-    cause a new security group to be created with the new rules, and the existing security group is then
-    replaced with the new one, eliminating any service interruption.
-    When `true` or when changing the value (from `false` to `true` or from `true` to `false`),
-    existing security group rules will be deleted before new ones are created, resulting in a service interruption,
-    but preserving the security group itself.
-    **NOTE:** Setting this to `true` does not guarantee the security group will never be replaced,
-    it only keeps changes to the security group rules from triggering a replacement.
-    See the README for further discussion.
-    EOT
-  default     = false
-}
-
-variable "rules" {
-  type        = list(any)
-  description = <<-EOT
-    A list of Security Group rule objects. All elements of a list must be exactly the same type;
-    use `rules_map` if you want to supply multiple lists of different types.
-    The keys and values of the Security Group rule objects are fully compatible with the `aws_security_group_rule` resource,
-    except for `security_group_id` which will be ignored, and the optional "key" which, if provided, must be unique
-    and known at "plan" time.
-    To get more info see the `security_group_rule` [documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule).
-    ___Note:___ The length of the list must be known at plan time.
-    This means you cannot use functions like `compact` or `sort` when computing the list.
-    EOT
-  default     = []
-}
-
-variable "rules_map" {
-  type        = any
-  description = <<-EOT
-    A map-like object of lists of Security Group rule objects. All elements of a list must be exactly the same type,
-    so this input accepts an object with keys (attributes) whose values are lists so you can separate different
-    types into different lists and still pass them into one input. Keys must be known at "plan" time.
-    The keys and values of the Security Group rule objects are fully compatible with the `aws_security_group_rule` resource,
-    except for `security_group_id` which will be ignored, and the optional "key" which, if provided, must be unique
-    and known at "plan" time.
-    To get more info see the `security_group_rule` [documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule).
-    EOT
-  default     = {}
-}
-
-variable "rule_matrix" {
-  type        = any
-  description = <<-EOT
-    A convenient way to apply the same set of rules to a set of subjects. See README for details.
-    EOT
-  default     = []
-}
-
 variable "revoke_rules_on_delete" {
   type        = bool
   description = <<-EOT
@@ -127,18 +74,20 @@ variable "vpc_name" {
     EOT
 }
 
-variable "inline_rules_enabled" {
-  type        = bool
-  description = <<-EOT
-    NOT RECOMMENDED. Create rules "inline" instead of as separate `aws_security_group_rule` resources.
-    See [#20046](https://github.com/hashicorp/terraform-provider-aws/issues/20046) for one of several issues with inline rules.
-    See [this post](https://github.com/hashicorp/terraform-provider-aws/pull/9032#issuecomment-639545250) for details on the difference between inline rules and rule resources.
-    EOT
-  default     = false
-}
-
 variable "tags" {
   type        = map(string)
   description = "A map of tags to add to all resources."
+  default     = {}
+}
+
+variable "ingress_rules" {
+  type        = any
+  description = "A map of ingress rules to add to the security group."
+  default     = {}
+}
+
+variable "egress_rules" {
+  type        = any
+  description = "A map of egress rules to add to the security group."
   default     = {}
 }

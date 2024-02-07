@@ -1,31 +1,5 @@
 locals {
-  enabled = var.enabled
-  inline  = var.inline_rules_enabled
-
-  # allow_all_egress = local.enabled && var.allow_all_egress
-  allow_all_egress = false
-
-  default_rule_description = "Managed by Terraform"
-
-  sg_create_before_destroy   = var.create_before_destroy
-  preserve_security_group_id = var.preserve_security_group_id || length(var.target_security_group_id) > 0
-
-
-  # Setting `create_before_destroy` on the security group rules forces `create_before_destroy` behavior
-  # on the security group, so we have to disable it on the rules if disabled on the security group.
-  # It also forces a new security group to be created whenever any rule changes, so we disable it
-  # when `local.preserve_security_group_id` is `true`. In the case where this Terraform module
-  # did not create the security group, Terraform cannot replace the security group, and
-  # `create_before_destroy` on the rules would fail due to duplicate rules being created, so again we must not allow it.
-  rule_create_before_destroy = local.sg_create_before_destroy && !local.preserve_security_group_id
-  # We also have to make it clear to Terraform that the "create before destroy" (CBD) rules
-  # will never reference the "destroy before create" (DBC) security group (SG)
-  # by keeping any conditional reference to the DBC SG out of the expression (unlike the `security_group_id` expression above).
-
-  # The only way to guarantee success when creating new rules before destroying old ones
-  # is to make the new rules part of a new security group.
-  # See https://github.com/cloudposse/terraform-aws-security-group/issues/34
-  rule_change_forces_new_security_group = local.enabled && local.rule_create_before_destroy
+  sg_create_before_destroy = var.create_before_destroy
 }
 
 
