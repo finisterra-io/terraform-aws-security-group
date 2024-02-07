@@ -82,7 +82,7 @@ resource "aws_vpc_security_group_egress_rule" "dbc" {
     # This has no actual effect, it is just here for emphasis
     create_before_destroy = false
   }
-  security_group_id            = local.security_group_id
+  security_group_id            = aws_security_group.default[0].id
   from_port                    = try(each.value.from_port, null)
   to_port                      = try(each.value.to_port, null)
   ip_protocol                  = each.value.ip_protocol
