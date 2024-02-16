@@ -39,7 +39,7 @@ resource "aws_vpc_security_group_ingress_rule" "dbc" {
   from_port                    = try(each.value.from_port, null)
   to_port                      = try(each.value.to_port, null)
   ip_protocol                  = each.value.ip_protocol
-  description                  = try(each.value.description, "nul")
+  description                  = try(each.value.description, null)
   cidr_ipv4                    = try(each.value.cidr_ipv4, null)
   cidr_ipv6                    = try(each.value.cidr_ipv6, null)
   prefix_list_id               = try(each.value.prefix_list_id, null)
@@ -58,7 +58,7 @@ resource "aws_vpc_security_group_egress_rule" "dbc" {
   from_port                    = try(each.value.from_port, null)
   to_port                      = try(each.value.to_port, null)
   ip_protocol                  = each.value.ip_protocol
-  description                  = try(each.value.description, "null")
+  description                  = try(each.value.description, null)
   cidr_ipv4                    = try(each.value.cidr_ipv4, null)
   cidr_ipv6                    = try(each.value.cidr_ipv6, null)
   prefix_list_id               = try(each.value.prefix_list_id, null)
