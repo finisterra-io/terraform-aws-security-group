@@ -36,7 +36,7 @@ variable "security_group_description" {
     The description to assign to the created Security Group.
     Warning: Changing the description causes the security group to be replaced.
     EOT
-  default     = ""
+  default     = " "
 }
 
 variable "create_before_destroy" {
