@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [1.0.3](https://github.com/finisterra-io/terraform-aws-security-group/compare/v1.0.2...v1.0.3) (2024-03-18)
+
+
+### Bug Fixes
+
+* add tfsec ([d9d42d4](https://github.com/finisterra-io/terraform-aws-security-group/commit/d9d42d4805d54708615c9ed67fcbb53f502340a5))
+
 ### [1.0.2](https://github.com/finisterra-io/terraform-aws-security-group/compare/v1.0.1...v1.0.2) (2024-02-16)
 
 
